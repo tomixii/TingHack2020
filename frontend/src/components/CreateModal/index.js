@@ -42,6 +42,7 @@ const CreateModal = ({ open, onClose, firebase, userLoc, user }) => {
 							name: doc.data().name,
 							imageUrl: doc.data().imageUrl,
 							createdAt: new Date().toISOString(),
+							communities: doc.data().communities,
 						})
 						.then(function (docRef) {
 							console.log('Document written with ID: ', docRef.id);
@@ -79,7 +80,7 @@ const CreateModal = ({ open, onClose, firebase, userLoc, user }) => {
 							justifyContent: 'space-between',
 						}}
 					>
-						<p style={{ color: '#EDEAE5' }}>Otsikko</p>
+						<p style={{ color: '#EDEAE5' }}>Otsikko*</p>
 						<div
 							style={{
 								float: 'right',
@@ -96,15 +97,6 @@ const CreateModal = ({ open, onClose, firebase, userLoc, user }) => {
 							/>
 						</div>
 					</div>
-					{console.log(
-						'state',
-						topic,
-						description,
-						minParticipation,
-						maxParticipation,
-						price,
-						category
-					)}
 					<div
 						style={{
 							display: 'flex',
@@ -113,7 +105,7 @@ const CreateModal = ({ open, onClose, firebase, userLoc, user }) => {
 							justifyContent: 'space-between',
 						}}
 					>
-						<p style={{ color: '#EDEAE5' }}>Kuvaus</p>
+						<p style={{ color: '#EDEAE5' }}>Kuvaus*</p>
 						<div
 							style={{
 								float: 'right',
@@ -140,7 +132,7 @@ const CreateModal = ({ open, onClose, firebase, userLoc, user }) => {
 							justifyContent: 'space-between',
 						}}
 					>
-						<p style={{ color: '#EDEAE5' }}>Henkilömäärä</p>
+						<p style={{ color: '#EDEAE5' }}>Henkilömäärä*</p>
 						<div
 							style={{
 								float: 'right',
@@ -174,7 +166,7 @@ const CreateModal = ({ open, onClose, firebase, userLoc, user }) => {
 							justifyContent: 'space-between',
 						}}
 					>
-						<p style={{ color: '#EDEAE5' }}>Arvioitu hinta per käyttäjä</p>
+						<p style={{ color: '#EDEAE5' }}>Arvioitu hinta per käyttäjä*</p>
 						<div
 							style={{
 								float: 'right',
@@ -199,7 +191,7 @@ const CreateModal = ({ open, onClose, firebase, userLoc, user }) => {
 							margin: '20px 40px 20px 40px ',
 						}}
 					>
-						<p style={{ color: '#EDEAE5' }}>Kategoria</p>
+						<p style={{ color: '#EDEAE5' }}>Kategoria*</p>
 						<FormControl variant="outlined">
 							<Select
 								labelId="demo-simple-select-outlined-label"
@@ -245,7 +237,6 @@ const CreateModal = ({ open, onClose, firebase, userLoc, user }) => {
 const useStyles = makeStyles((theme) => ({
 	modal: {
 		width: '60%',
-		height: '80%',
 		backgroundColor: '#026670', // vaalea'#EDEAE5'
 	},
 	paper: {
