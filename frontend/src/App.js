@@ -30,6 +30,8 @@ import CreateModal from './components/CreateModal';
 import SearchModal from './components/SearchModal';
 import PostCard from './components/Posts/PostCard';
 import Map from './components/Map';
+import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
 
 const theme = createMuiTheme({
 	palette: {
@@ -78,7 +80,7 @@ const App = (props) => {
 	const [loadingPosts, setLoadingPosts] = useState(true);
 	const [posts, setPosts] = useState([]);
 	const [userLoc, setUserLoc] = useState({});
-	const [showMap, setShowMap] = useState(true);
+	const [showMap, setShowMap] = useState(false);
 
 	useEffect(() => {
 		navigator.geolocation.getCurrentPosition((position) => {
@@ -176,23 +178,59 @@ const App = (props) => {
 					)}
 				</Grid>
 				{showMap ? (
-					<Grid container alignItems="center" direction="column">
-						<Map userLoc={userLoc} posts={posts} />
+					<Grid container alignItems="center" direction="row">
+						<Grid item xs={2}>
+							<Grid container justify="flex-end">
+								<IconButton onClick={() => setShowMap(false)}>
+									<ArrowBackIcon style={{ fontSize: 96, color: '#026670' }} />
+								</IconButton>
+							</Grid>
+						</Grid>
+						<Grid item xs={8}>
+							<Grid container justify="center">
+								<Map userLoc={userLoc} posts={posts} user={user} />
+							</Grid>
+						</Grid>
+						<Grid item xs={2}></Grid>
 					</Grid>
 				) : (
-					<Grid container alignItems="center" direction="column">
-						<div
-							id="noscroll"
-							style={{ height: 'calc(100vh - 150px)', overflowY: 'scroll' }}
-						>
-							{loadingPosts ? (
-								<p>Loading</p>
-							) : (
-								posts.map((post, i) => (
-									<PostCard post={post} key={i} user={user} userLoc={userLoc} />
-								))
-							)}
-						</div>
+					<Grid container alignItems="center" direction="row">
+						<Grid item xs={2}></Grid>
+						<Grid item xs={8}>
+							<Grid container justify="center">
+								<Grid container alignItems="center" direction="column">
+									<div
+										id="noscroll"
+										style={{
+											height: 'calc(100vh - 150px)',
+											overflowY: 'scroll',
+										}}
+									>
+										{loadingPosts ? (
+											<p>Loading</p>
+										) : (
+											posts.map((post, i) => (
+												<PostCard
+													post={post}
+													key={i}
+													user={user}
+													userLoc={userLoc}
+												/>
+											))
+										)}
+									</div>
+								</Grid>
+							</Grid>
+						</Grid>
+						<Grid item xs={2}>
+							<Grid container justify="flex-start">
+								<IconButton onClick={() => setShowMap(true)}>
+									<ArrowForwardIcon
+										style={{ fontSize: 96, color: '#edeae5' }}
+									/>
+								</IconButton>
+							</Grid>
+						</Grid>
 					</Grid>
 				)}
 			</Box>

@@ -27,11 +27,10 @@ const SearchModal = ({
 	const [search, setSearch] = useState('');
 	const [minPrice, setMinPrice] = useState(0);
 	const [maxPrice, setMaxPrice] = useState(100000);
-	const [category, setCategory] = useState('Kaikki');
+	const [category, setCategory] = useState('all');
 	const [distance, setDistance] = React.useState(1000000);
 	const [place, setPlace] = React.useState('All');
 	const classes = useStyles();
-
 
 	function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
 		var R = 6371; // Radius of the earth in km
@@ -56,16 +55,19 @@ const SearchModal = ({
 		event.preventDefault();
 		firebase
 			.posts()
-			.where('price', '<', parseInt(maxPrice ? maxPrice : 100000))
+			.where('price', '<=', parseInt(maxPrice ? maxPrice : 100000))
 			.where(
 				'category',
 				'in',
-				category === 'Kaikki' ? ['tools', 'technology', 'outdoors'] : [category]
+				category === 'all'
+					? ['tools', 'technology', 'outdoors', 'all']
+					: [category]
 			)
 			.get()
 			.then((snapshot) => {
 				const postsToReturn = [];
 				snapshot.forEach((doc) => {
+					console.log(doc.data());
 					if (
 						doc.data().title.toLowerCase().includes(search.toLowerCase()) &&
 						distance >
@@ -156,7 +158,7 @@ const SearchModal = ({
 								className={classes.formControl}
 								onChange={(event) => setCategory(event.target.value)}
 							>
-								<MenuItem value="Kaikki">
+								<MenuItem value="all">
 									<em>Kaikki</em>
 								</MenuItem>
 								<MenuItem value="tools">Työkalut</MenuItem>
