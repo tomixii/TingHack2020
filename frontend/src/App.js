@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { Link, withRouter, Router } from 'react-router-dom';
+
 import _ from 'lodash';
 
 import { withFirebase } from './components/Firebase';
@@ -74,11 +76,18 @@ const App = (props) => {
 
 	const [loadingPosts, setLoadingPosts] = useState(true);
 	const [posts, setPosts] = useState([]);
+	const [userLoc, setUserLoc] = useState({});
 
 	useEffect(() => {
+		navigator.geolocation.getCurrentPosition((position) => {
+			setUserLoc({
+				longitude: position.coords.longitude,
+				latitude: position.coords.latitude,
+			});
+		});
 		props.firebase
 			.posts()
-			//.orderBy('createdAt', 'desc')
+			.orderBy('createdAt', 'desc')
 			.get()
 			.then((data) => {
 				const allPosts = [];
@@ -101,11 +110,15 @@ const App = (props) => {
 			<Box className={classes.rootContainer}>
 				<CreateModal
 					open={createActive}
+					userLoc={userLoc}
+					user={user}
 					onClose={() => setCreateActive(false)}
 				/>
 				<SearchModal
 					open={searchActive}
 					onClose={() => setSearchActive(false)}
+					userLoc={userLoc}
+					handleSearchAction={setPosts}
 				/>
 				<Grid
 					container
@@ -115,7 +128,13 @@ const App = (props) => {
 					color="primary"
 				>
 					<Grid item>
-						<Typography variant="h4" color="secondary" className={classes.logo}>
+						<Typography
+							variant="h4"
+							color="secondary"
+							className={classes.logo}
+							onClick={() => window.location.reload()}
+							style={{ cursor: 'pointer' }}
+						>
 							YHTEISELO
 						</Typography>
 					</Grid>
@@ -161,7 +180,7 @@ const App = (props) => {
 							<p>Loading</p>
 						) : (
 							posts.map((post, i) => (
-								<PostCard post={post} key={i} user={user} />
+								<PostCard post={post} key={i} user={user} userLoc={userLoc} />
 							))
 						)}
 					</div>

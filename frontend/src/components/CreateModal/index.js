@@ -12,7 +12,7 @@ import MenuItem from "@material-ui/core/MenuItem";
 import Button from "@material-ui/core/Button";
 import { withFirebase } from '../Firebase';
 
-const CreateModal = ({ open, onClose, firebase }) => {
+const CreateModal = ({ open, onClose, firebase, userLoc, user }) => {
 	const [topic, setTopic] = React.useState('');
 	const [description, setDescription] = React.useState('');
 	const [minParticipation, setMinParticipation] = React.useState(0);
@@ -22,13 +22,36 @@ const CreateModal = ({ open, onClose, firebase }) => {
 	const classes = useStyles();
 
 	const handleSubmit = (event) => {
-		firebase.posts().add({
-			title: topic,
-			category,
-			price,
+		firebase.user(firebase.auth.currentUser.uid).get().then(function(doc) {
+			if (doc.exists) {
+				firebase.posts().add({
+					title: topic,
+					category,
+					price,
+					latitude: userLoc.latitude,
+					longitude: userLoc.longitude,
+					min: minParticipation,
+					max: maxParticipation,
+					usersIn: [],
+					name: doc.data().name,
+					imageUrl: doc.data().imageUrl,
+					createdAt: new Date().toISOString()
 
-		})
-		console.log("submit")
+				})
+					.then(function(docRef) {
+						console.log("Document written with ID: ", docRef.id);
+					})
+					.catch(function(error) {
+						console.error("Error adding document: ", error);
+					});
+			} else {
+				// doc.data() will be undefined in this case
+				console.log("No such document!");
+			}
+		}).catch(function(error) {
+			console.log("Error getting document:", error);
+		});
+
 	}
 
 	return (
@@ -120,6 +143,7 @@ const CreateModal = ({ open, onClose, firebase }) => {
 						<Button
 							variant="outlined"
 							color="primary"
+							disabled={topic === '' || description === '' || minParticipation === 0 || maxParticipation === 10000 || price === 0}
 							onClick={(event) => handleSubmit(event)}
 							size="large"
 						>
