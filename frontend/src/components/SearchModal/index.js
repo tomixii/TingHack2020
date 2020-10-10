@@ -30,9 +30,7 @@ const SearchModal = ({ open, onClose, firebase }) => {
 
 	const handleSubmit = (event) => {
 		event.preventDefault()
-		console.log("heeloo")
 		firebase.posts().where('price', '<', parseInt(maxPrice)).where('category', '==', category).get().then(snapshot => {
-			console.log("333", maxPrice, category)
 
 			snapshot.forEach(doc => {
 					console.log("firebase", doc.data())
