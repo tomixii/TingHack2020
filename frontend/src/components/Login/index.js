@@ -12,7 +12,10 @@ const LoginSwitch = (props) => {
 		if (isLoggedIn) {
 			props.firebase
 				.doSignInWithEmailAndPassword('admin@admin.com', 'asd123')
-				.then((user) => props.handleSwitch(user))
+				.then((user) => {
+					console.log(user);
+					return props.handleSwitch(user);
+				})
 				.catch((err) => console.log(err));
 		} else {
 			props.firebase.doSignOut();
