@@ -112,6 +112,8 @@ const App = (props) => {
 			<Box className={classes.rootContainer}>
 				<CreateModal
 					open={createActive}
+					userLoc={userLoc}
+					user={user}
 					onClose={() => setCreateActive(false)}
 				/>
 				<SearchModal
