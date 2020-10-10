@@ -1,15 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import _ from 'lodash';
 
 import { withFirebase } from './components/Firebase';
 
 import { withAuthentication } from './components/Session';
+import background from './images/background.png';
 
 import {
-	ThemeProvider as MuiThemeProvider,
+	createMuiTheme,
+	MuiThemeProvider,
 	makeStyles,
 } from '@material-ui/core/styles';
-import createMuiTheme from '@material-ui/core/styles/createMuiTheme';
 import {
 	Typography,
 	IconButton,
@@ -17,12 +18,15 @@ import {
 	MenuItem,
 	Box,
 	Button,
+	Grid,
 } from '@material-ui/core';
 
-import AccountCircle from '@material-ui/icons/AccountCircle';
+import SearchIcon from '@material-ui/icons/Search';
+import AddIcon from '@material-ui/icons/Add';
 import LoginSwitch from './components/Login';
 import CreateModal from './components/CreateModal';
 import SearchModal from './components/SearchModal';
+import PostCard from './components/Posts/PostCard';
 
 const theme = createMuiTheme({
 	palette: {
@@ -31,12 +35,31 @@ const theme = createMuiTheme({
 			main: '#026670',
 		},
 	},
+	overrides: {
+		MuiButton: {
+			outlinedSecondary: {
+				borderWidth: 3,
+				borderRadius: 10,
+				backgroundColor: '#edeae5',
+				margin: 10,
+			},
+			'&hover': {
+				backgroundColor: '#edeae5',
+			},
+		},
+	},
 });
 
 const useStyles = makeStyles((theme) => ({
-	root: {
-		color: theme.palette.primary.main,
+	rootContainer: {
+		backgroundColor: '#edeae5',
+		height: '100%',
+		backgroundImage: `url(${background})`,
+		backgroundSize: '100%',
+		overflowY: 'hidden',
 	},
+	topbar: { padding: 20, height: 80 },
+	buttonRow: { height: 70 },
 }));
 
 const App = (props) => {
@@ -44,9 +67,26 @@ const App = (props) => {
 
 	const [searchActive, setSearchActive] = useState(false);
 	const [createActive, setCreateActive] = useState(false);
+
 	const [user, setUser] = React.useState({});
 	const [anchorEl, setAnchorEl] = React.useState(null);
 	const open = Boolean(anchorEl);
+
+	const [loadingPosts, setLoadingPosts] = useState(true);
+	const [posts, setPosts] = useState([]);
+
+	useEffect(() => {
+		props.firebase
+			.posts()
+			//.orderBy('createdAt', 'desc')
+			.get()
+			.then((data) => {
+				const allPosts = [];
+				data.forEach((doc) => allPosts.push({ postId: doc.id, ...doc.data() }));
+				setPosts(allPosts);
+				setLoadingPosts(false);
+			});
+	}, []);
 
 	const handleMenu = (event) => {
 		setAnchorEl(event.currentTarget);
@@ -58,8 +98,7 @@ const App = (props) => {
 
 	return (
 		<MuiThemeProvider theme={theme}>
-			<Box className={classes.root}>
-				{console.log(createActive)}
+			<Box className={classes.rootContainer}>
 				<CreateModal
 					open={createActive}
 					onClose={() => setCreateActive(false)}
@@ -68,43 +107,65 @@ const App = (props) => {
 					open={searchActive}
 					onClose={() => setSearchActive(false)}
 				/>
-				<Typography variant="h4" color="secondary">
-					YHTEISELO
-				</Typography>
-				<LoginSwitch handleSwitch={setUser} />
-				<Button onClick={() => setSearchActive(true)}>Hae</Button>
-				<Button onClick={() => setCreateActive(true)}>Luo</Button>
-				{!_.isEmpty(user) && (
-					<div>
-						<IconButton
-							aria-label="account of current user"
-							aria-controls="menu-appbar"
-							aria-haspopup="true"
-							onClick={handleMenu}
-							color="inherit"
-						>
-							<AccountCircle />
-						</IconButton>
-						<Menu
-							id="menu-appbar"
-							anchorEl={anchorEl}
-							anchorOrigin={{
-								vertical: 'top',
-								horizontal: 'right',
-							}}
-							keepMounted
-							transformOrigin={{
-								vertical: 'top',
-								horizontal: 'right',
-							}}
-							open={open}
-							onClose={handleClose}
-						>
-							<MenuItem onClick={handleClose}>Profile</MenuItem>
-							<MenuItem onClick={handleClose}>My account</MenuItem>
-						</Menu>
+				<Grid
+					container
+					direction="row"
+					justify="space-between"
+					className={classes.topbar}
+					color="primary"
+				>
+					<Grid item>
+						<Typography variant="h4" color="secondary" className={classes.logo}>
+							YHTEISELO
+						</Typography>
+					</Grid>
+					<Grid item>
+						<Grid container direction="row">
+							<Typography
+								variant="h6"
+								color="secondary"
+								className={classes.logo}
+							>
+								Kirjautunut
+							</Typography>
+							<LoginSwitch handleSwitch={setUser} />
+						</Grid>
+					</Grid>
+				</Grid>
+				<Grid container justify="center" className={classes.buttonRow}>
+					<Button
+						variant="outlined"
+						color="secondary"
+						onClick={() => setSearchActive(true)}
+						startIcon={<SearchIcon />}
+						size="large"
+					>
+						Hae
+					</Button>
+					<Button
+						variant="outlined"
+						color="secondary"
+						onClick={() => setCreateActive(true)}
+						startIcon={<AddIcon />}
+						size="large"
+					>
+						Luo
+					</Button>
+				</Grid>
+				<Grid container alignItems="center" direction="column">
+					<div
+						id="noscroll"
+						style={{ height: 'calc(100vh - 150px)', overflowY: 'scroll' }}
+					>
+						{loadingPosts ? (
+							<p>Loading</p>
+						) : (
+							posts.map((post, i) => (
+								<PostCard post={post} key={i} user={user} />
+							))
+						)}
 					</div>
-				)}
+				</Grid>
 			</Box>
 		</MuiThemeProvider>
 	);

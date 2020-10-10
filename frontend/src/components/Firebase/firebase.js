@@ -40,6 +40,22 @@ class Firebase {
 	//user = (uid) => this.db.collection('users')/${uid}`);
 
 	users = () => this.db.collection('users');
+
+	//post api
+	posts = () => this.db.collection('posts');
+	post = (postId) => this.db.document(`posts/${postId}`);
+
+	addToUsersIn = (postId, userId) =>
+		this.db
+			.collection('posts')
+			.doc(postId)
+			.update({ usersIn: app.firestore.FieldValue.arrayUnion(userId) });
+
+	removeFromUsersIn = (postId, userId) =>
+		this.db
+			.collection('posts')
+			.doc(postId)
+			.update({ usersIn: app.firestore.FieldValue.arrayRemove(userId) });
 }
 
 export default Firebase;
