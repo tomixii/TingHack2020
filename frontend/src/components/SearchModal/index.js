@@ -65,6 +65,13 @@ const SearchModal = ({
 			.get()
 			.then((snapshot) => {
 				const postsToReturn = [];
+				const userComminuties = [];
+				firebase.user(firebase.auth.currentUser.uid).get().then(function(doc) {
+					console.log("adssdasda",doc.data())
+					if (doc.exists) {
+						userComminuties.push(doc.data().communities)
+					}
+				})
 				snapshot.forEach((doc) => {
 					if (
 						doc.data().title.toLowerCase().includes(search.toLowerCase()) &&
@@ -76,7 +83,15 @@ const SearchModal = ({
 								userLoc.longitude
 							)
 					) {
-						postsToReturn.push(doc.data());
+
+						if (place === 'Own') {
+							for (let i = 0; i < doc.data().communities.length; i++) {
+								if (doc.data().communities[i].includes(userComminuties)) {
+									postsToReturn.push(doc.data());
+									break;
+								}
+							}
+						}
 					}
 				});
 				return postsToReturn;
@@ -184,43 +199,45 @@ const SearchModal = ({
 							valueLabelDisplay="auto"
 						/>
 					</div>
-					<FormControl component="fieldset">
-						<FormLabel
-							style={{ color: '#EDEAE5' }}
-							className={classes.center}
-							component="legend"
-						>
-							Hae
-						</FormLabel>
-						<RadioGroup
-							style={{ marginLeft: '40px' }}
-							aria-label="place"
-							name="gender1"
-							value={place}
-							onChange={(event) => setPlace(event.target.value)}
-						>
-							<FormControlLabel
+					{firebase.auth.currentUser &&
+						<FormControl component="fieldset">
+							<FormLabel
 								style={{ color: '#EDEAE5' }}
-								value="All"
-								control={
-									<Radio
-										classes={{ root: classes.radio, checked: classes.checked }}
-									/>
-								}
-								label="Kaikkialta"
-							/>
-							<FormControlLabel
-								style={{ color: '#EDEAE5' }}
-								value="Own"
-								control={
-									<Radio
-										classes={{ root: classes.radio, checked: classes.checked }}
-									/>
-								}
-								label="Omista yhteisöistä"
-							/>
-						</RadioGroup>
-					</FormControl>
+								className={classes.center}
+								component="legend"
+							>
+								Hae
+							</FormLabel>
+							<RadioGroup
+								style={{ marginLeft: '40px' }}
+								aria-label="place"
+								name="gender1"
+								value={place}
+								onChange={(event) => setPlace(event.target.value)}
+							>
+								<FormControlLabel
+									style={{ color: '#EDEAE5' }}
+									value="All"
+									control={
+										<Radio
+											classes={{ root: classes.radio, checked: classes.checked }}
+										/>
+									}
+									label="Kaikkialta"
+								/>
+								<FormControlLabel
+									style={{ color: '#EDEAE5' }}
+									value="Own"
+									control={
+										<Radio
+											classes={{ root: classes.radio, checked: classes.checked }}
+										/>
+									}
+									label="Omista yhteisöistä"
+								/>
+							</RadioGroup>
+						</FormControl>
+					}
 					<br></br>
 					<div className={classes.center}>
 						<Button

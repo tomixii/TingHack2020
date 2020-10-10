@@ -28,6 +28,7 @@ const CreateModal = ({ open, onClose, firebase, userLoc, user }) => {
 					title: topic,
 					category,
 					price,
+					description,
 					latitude: userLoc.latitude,
 					longitude: userLoc.longitude,
 					min: minParticipation,
@@ -35,7 +36,8 @@ const CreateModal = ({ open, onClose, firebase, userLoc, user }) => {
 					usersIn: [],
 					name: doc.data().name,
 					imageUrl: doc.data().imageUrl,
-					createdAt: new Date().toISOString()
+					createdAt: new Date().toISOString(),
+					communities: doc.data().communities
 
 				})
 					.then(function(docRef) {
@@ -62,7 +64,7 @@ const CreateModal = ({ open, onClose, firebase, userLoc, user }) => {
 				</div>
 				<form className={classes.root} noValidate autoComplete="off" onSubmit={() => handleSubmit()}>
 					<div style={{display: 'flex', alignItems: 'center', margin: '20px 40px 20px 40px ', justifyContent: 'space-between'}}>
-						<p style={{color: '#EDEAE5'}}>Otsikko</p>
+						<p style={{color: '#EDEAE5'}}>Otsikko*</p>
 						<div style={{ float: 'right', clear: 'both', display: 'flex', alignItems: 'center' }}>
 							<TextField
 								variant="outlined"
@@ -74,7 +76,7 @@ const CreateModal = ({ open, onClose, firebase, userLoc, user }) => {
 					</div>
 					{console.log("state", topic, description, minParticipation, maxParticipation, price, category)}
 					<div style={{display: 'flex', alignItems: 'center', margin: '20px 40px 20px 40px ', justifyContent: 'space-between'}}>
-						<p style={{color: '#EDEAE5'}}>Kuvaus</p>
+						<p style={{color: '#EDEAE5'}}>Kuvaus*</p>
 							<div style={{ float: 'right', clear: 'both', display: 'flex', alignItems: 'center' }}>
 								<TextField
 									rows={4}
@@ -87,7 +89,7 @@ const CreateModal = ({ open, onClose, firebase, userLoc, user }) => {
 						</div>
 					</div>
 					<div style={{display: 'flex', alignItems: 'center', margin: '20px 40px 20px 40px ', justifyContent: 'space-between'}}>
-						<p style={{color: '#EDEAE5'}}>Henkilömäärä</p>
+						<p style={{color: '#EDEAE5'}}>Henkilömäärä*</p>
 						<div style={{ float: 'right', clear: 'both', display: 'flex', alignItems: 'center' }}>
 							<TextField
 								variant="outlined"
@@ -107,7 +109,7 @@ const CreateModal = ({ open, onClose, firebase, userLoc, user }) => {
 						</div>
 					</div>
 					<div style={{display: 'flex', alignItems: 'center', margin: '20px 40px 20px 40px ', justifyContent: 'space-between'}}>
-						<p style={{color: '#EDEAE5'}}>Arvioitu hinta per käyttäjä</p>
+						<p style={{color: '#EDEAE5'}}>Arvioitu hinta per käyttäjä*</p>
 							<div style={{ float: 'right', clear: 'both', display: 'flex', alignItems: 'center' }}>
 								<TextField
 									variant="outlined"
@@ -119,7 +121,7 @@ const CreateModal = ({ open, onClose, firebase, userLoc, user }) => {
 						</div>
 					</div>
 					<div style={{display: 'flex', justifyContent: 'space-between', margin: '20px 40px 20px 40px '}}>
-						<p style={{color: '#EDEAE5'}}>Kategoria</p>
+						<p style={{color: '#EDEAE5'}}>Kategoria*</p>
 						<FormControl variant="outlined" >
 							<Select
 								labelId="demo-simple-select-outlined-label"
