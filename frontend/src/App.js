@@ -29,6 +29,7 @@ import LoginSwitch from './components/Login';
 import CreateModal from './components/CreateModal';
 import SearchModal from './components/SearchModal';
 import PostCard from './components/Posts/PostCard';
+import Map from './components/Map';
 
 const theme = createMuiTheme({
 	palette: {
@@ -77,6 +78,7 @@ const App = (props) => {
 	const [loadingPosts, setLoadingPosts] = useState(true);
 	const [posts, setPosts] = useState([]);
 	const [userLoc, setUserLoc] = useState({});
+	const [showMap, setShowMap] = useState(true);
 
 	useEffect(() => {
 		navigator.geolocation.getCurrentPosition((position) => {
@@ -159,30 +161,38 @@ const App = (props) => {
 					>
 						Hae
 					</Button>
-					<Button
-						variant="outlined"
-						color="secondary"
-						onClick={() => setCreateActive(true)}
-						startIcon={<AddIcon />}
-						size="large"
-					>
-						Luo
-					</Button>
+					{!_.isEmpty(user) && (
+						<Button
+							variant="outlined"
+							color="secondary"
+							onClick={() => setCreateActive(true)}
+							startIcon={<AddIcon />}
+							size="large"
+						>
+							Luo
+						</Button>
+					)}
 				</Grid>
-				<Grid container alignItems="center" direction="column">
-					<div
-						id="noscroll"
-						style={{ height: 'calc(100vh - 150px)', overflowY: 'scroll' }}
-					>
-						{loadingPosts ? (
-							<p>Loading</p>
-						) : (
-							posts.map((post, i) => (
-								<PostCard post={post} key={i} user={user} userLoc={userLoc} />
-							))
-						)}
-					</div>
-				</Grid>
+				{showMap ? (
+					<Grid container alignItems="center" direction="column">
+						<Map userLoc={userLoc} posts={posts} />
+					</Grid>
+				) : (
+					<Grid container alignItems="center" direction="column">
+						<div
+							id="noscroll"
+							style={{ height: 'calc(100vh - 150px)', overflowY: 'scroll' }}
+						>
+							{loadingPosts ? (
+								<p>Loading</p>
+							) : (
+								posts.map((post, i) => (
+									<PostCard post={post} key={i} user={user} userLoc={userLoc} />
+								))
+							)}
+						</div>
+					</Grid>
+				)}
 			</Box>
 		</MuiThemeProvider>
 	);
