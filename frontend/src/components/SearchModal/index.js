@@ -67,12 +67,17 @@ const SearchModal = ({
 			.then((snapshot) => {
 				const postsToReturn = [];
 				const userComminuties = [];
-				firebase.user(firebase.auth.currentUser.uid).get().then(function(doc) {
-					console.log("adssdasda",doc.data())
-					if (doc.exists) {
-						userComminuties.push(doc.data().communities)
-					}
-				})
+				if (firebase.auth.currentUser) {
+					firebase
+						.user(firebase.auth.currentUser.uid)
+						.get()
+						.then(function (doc) {
+							console.log('adssdasda', doc.data());
+							if (doc.exists) {
+								userComminuties.push(doc.data().communities);
+							}
+						});
+				}
 				snapshot.forEach((doc) => {
 					console.log(doc.data());
 					if (
@@ -85,7 +90,6 @@ const SearchModal = ({
 								userLoc.longitude
 							)
 					) {
-
 						if (place === 'Own') {
 							for (let i = 0; i < doc.data().communities.length; i++) {
 								if (doc.data().communities[i].includes(userComminuties)) {
@@ -93,6 +97,8 @@ const SearchModal = ({
 									break;
 								}
 							}
+						} else {
+							postsToReturn.push(doc.data());
 						}
 					}
 				});
@@ -129,6 +135,7 @@ const SearchModal = ({
 							InputProps={{
 								endAdornment: <SearchIcon style={{ color: '#026670' }} />,
 							}}
+							autoFocus
 						/>
 					</div>
 					<div
@@ -201,7 +208,7 @@ const SearchModal = ({
 							valueLabelDisplay="auto"
 						/>
 					</div>
-					{firebase.auth.currentUser &&
+					{firebase.auth.currentUser && (
 						<FormControl component="fieldset">
 							<FormLabel
 								style={{ color: '#EDEAE5' }}
@@ -222,7 +229,10 @@ const SearchModal = ({
 									value="All"
 									control={
 										<Radio
-											classes={{ root: classes.radio, checked: classes.checked }}
+											classes={{
+												root: classes.radio,
+												checked: classes.checked,
+											}}
 										/>
 									}
 									label="Kaikkialta"
@@ -232,14 +242,17 @@ const SearchModal = ({
 									value="Own"
 									control={
 										<Radio
-											classes={{ root: classes.radio, checked: classes.checked }}
+											classes={{
+												root: classes.radio,
+												checked: classes.checked,
+											}}
 										/>
 									}
 									label="Omista yhteisöistä"
 								/>
 							</RadioGroup>
 						</FormControl>
-					}
+					)}
 					<br></br>
 					<div className={classes.center}>
 						<Button

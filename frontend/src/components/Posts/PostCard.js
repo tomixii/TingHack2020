@@ -37,12 +37,17 @@ const PostCard = ({ post, firebase, user, userLoc }) => {
 	const [imIn, setImIn] = React.useState(false);
 
 	React.useEffect(() => {
+		console.log('auth changed');
 		setImIn(
 			firebase.auth.currentUser
 				? post.usersIn.includes(firebase.auth.currentUser.uid)
 				: false
 		);
 	}, [firebase.auth.currentUser]);
+
+	const isLoggedIn = () => {
+		return firebase.auth.currentUser && !_.isEmpty(user);
+	};
 
 	const getTimeDifference = () => {
 		let difference = new Date() - Date.parse(post.createdAt);
@@ -70,6 +75,7 @@ const PostCard = ({ post, firebase, user, userLoc }) => {
 				(item) => item != firebase.auth.currentUser.uid
 			);
 		} else {
+			console.log(post.postId, firebase.auth.currentUser.uid);
 			firebase.addToUsersIn(post.postId, firebase.auth.currentUser.uid);
 			post.usersIn.push(firebase.auth.currentUser.uid);
 		}
@@ -107,7 +113,7 @@ const PostCard = ({ post, firebase, user, userLoc }) => {
 				<Grid item>
 					<Grid container direction="row">
 						<Typography variant="h4">{post.title}</Typography>
-						{firebase.auth.currentUser && (
+						{isLoggedIn() && (
 							<Button
 								variant="outlined"
 								color="primary"

@@ -35,10 +35,10 @@ const Map = (props) => {
 			<GoogleMapReact
 				bootstrapURLKeys={{ key: 'AIzaSyA5QI05Hz7NxIYeWzdYgh---GflRVi_c4k' }}
 				defaultCenter={{
-					lat: 60.17515519999999,
-					lng: 25,
+					lat: 60.639496,
+					lng: 25.323531,
 				}}
-				defaultZoom={11}
+				defaultZoom={14}
 			>
 				{props.posts.map((post) => (
 					<MapMarker

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link, withRouter, Router } from 'react-router-dom';
-
 import _ from 'lodash';
+import './index.css';
+import RobotoSlab from './fonts/roboto_slab/static/RobotoSlab-Regular.ttf';
 
 import { withFirebase } from './components/Firebase';
 
@@ -32,6 +33,7 @@ import PostCard from './components/Posts/PostCard';
 import Map from './components/Map';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
+import CssBaseline from '@material-ui/core/CssBaseline';
 
 const theme = createMuiTheme({
 	palette: {
@@ -116,7 +118,9 @@ const App = (props) => {
 					open={createActive}
 					userLoc={userLoc}
 					user={user}
+					posts={posts}
 					onClose={() => setCreateActive(false)}
+					handleCreateAction={setPosts}
 				/>
 				<SearchModal
 					open={searchActive}

@@ -12,7 +12,15 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Button from '@material-ui/core/Button';
 import { withFirebase } from '../Firebase';
 
-const CreateModal = ({ open, onClose, firebase, userLoc, user }) => {
+const CreateModal = ({
+	open,
+	onClose,
+	firebase,
+	userLoc,
+	user,
+	posts,
+	handleCreateAction,
+}) => {
 	const [topic, setTopic] = React.useState('');
 	const [description, setDescription] = React.useState('');
 	const [minParticipation, setMinParticipation] = React.useState(0);
@@ -27,25 +35,30 @@ const CreateModal = ({ open, onClose, firebase, userLoc, user }) => {
 			.get()
 			.then(function (doc) {
 				if (doc.exists) {
+					const documentToAdd = {
+						title: topic,
+						category,
+						price: parseInt(price),
+						description,
+						latitude: userLoc.latitude,
+						longitude: userLoc.longitude,
+						min: parseInt(minParticipation),
+						max: parseInt(maxParticipation),
+						usersIn: [firebase.auth.currentUser.uid],
+						name: doc.data().name,
+						imageUrl: doc.data().imageUrl,
+						createdAt: new Date().toISOString(),
+						communities: doc.data().communities,
+					};
 					firebase
 						.posts()
-						.add({
-							title: topic,
-							category,
-							price: parseInt(price),
-							description,
-							latitude: userLoc.latitude,
-							longitude: userLoc.longitude,
-							min: parseInt(minParticipation),
-							max: parseInt(maxParticipation),
-							usersIn: [],
-							name: doc.data().name,
-							imageUrl: doc.data().imageUrl,
-							createdAt: new Date().toISOString(),
-							communities: doc.data().communities,
-						})
+						.add(documentToAdd)
 						.then(function (docRef) {
 							console.log('Document written with ID: ', docRef.id);
+							let newList = posts;
+							newList.unshift(documentToAdd);
+							handleCreateAction(newList);
+							onClose();
 						})
 						.catch(function (error) {
 							console.error('Error adding document: ', error);
@@ -94,6 +107,7 @@ const CreateModal = ({ open, onClose, firebase, userLoc, user }) => {
 								type="string"
 								className={classes.inputField}
 								onChange={(event) => setTopic(event.target.value)}
+								autoFocus
 							/>
 						</div>
 					</div>

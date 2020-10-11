@@ -107,17 +107,6 @@ const MapPostCard = ({ post, firebase, user, userLoc }) => {
 				<Grid item>
 					<Grid container direction="row">
 						<Typography variant="h4">{post.title}</Typography>
-						{firebase.auth.currentUser && (
-							<Button
-								variant="outlined"
-								color="primary"
-								onClick={() => toggleJoin()}
-								size="small"
-								style={{ marginLeft: 10 }}
-							>
-								{imIn ? 'Poistu' : 'Liity'}
-							</Button>
-						)}
 					</Grid>
 					<Grid container alignItems="center">
 						<PeopleAltIcon />
